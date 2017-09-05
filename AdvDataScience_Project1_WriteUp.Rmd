@@ -1,5 +1,5 @@
 ---
-title: "AdvDataScience_Project1_WriteUp"
+title: "Project 1: Summarizing the main sources of variability in the way people solve their data cleaning final project"
 author: "Andrew Leroux"
 date: "9/4/2017"
 output: html_document
@@ -9,23 +9,24 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Data Source
 
-this is a test 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The data will be retrieved from the github repo linked by Jeff.
+As far as I can tell there aren't any "write-ups" persay, but we can analyze individuals' R code.
+To that extent, we need simply search each individuals' repo for the file "run_analysis.R".
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+However, I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply 
+sourced this document with their "run_analysis.R" file.
 
-```{r cars}
-summary(cars)
-```
+## Scientific Question
 
-## Including Plots
+Ultimately, I think the scientific question we're asking here is how can we quantify the differences in the way 
+people write code.
 
-You can also embed plots, for example:
+## Current plan of attack
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+It seems to me like a logical place to start in terms of explaining the variability in how individuals solved this 
+problem will be in the number of function calls they made, as well as the number of different functions they used, 
+what packages these functions are associated with, and the "intended use" of said functions. 
+To identify these patterns we can use do some fairly straightforward regular expression parsing. 
+Depending on the number of unique functions 
