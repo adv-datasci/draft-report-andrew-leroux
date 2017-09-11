@@ -1,7 +1,7 @@
 ---
 title: "Project 1: Summarizing the main sources of variability in the way people solve their data cleaning final project"
 author: "Andrew Leroux"
-date: "9/4/2017"
+date: "9/11/2017"
 output: html_document
 ---
 
@@ -9,14 +9,25 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Data Source
+## Methods
 
-The data will be retrieved from the github repo linked by Jeff.
-As far as I can tell there aren't any "write-ups" persay, but we can analyze individuals' R code.
-To that extent, we need simply search each individuals' repo for the file "run_analysis.R".
+# Data Location
 
-However, I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply 
+Note: This is an initial pass. Depending on how many "non-standard" file paths I run into, I may hav eto revise this portion 
+of the data retrieval process. 
+I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply 
 sourced this document with their "run_analysis.R" file.
+
+
+The data will be retrieved from the github repo linked by Jeff (http://jtleek.com/advdatasci/).
+The analysis will be performed on individuals "run_analysis.R" files. 
+The code checks for non-standard capitalization (i.e. Run vs RUN vs run). 
+To find these files, we do an exhaustive check of folder pathways in individuals' repositories. 
+
+# Data Retrieval 
+
+
+
 
 ## Scientific Question
 

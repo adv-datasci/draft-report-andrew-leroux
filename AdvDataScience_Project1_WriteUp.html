@@ -118,16 +118,21 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Project 1: Summarizing the main sources of variability in the way people solve their data cleaning final project</h1>
 <h4 class="author"><em>Andrew Leroux</em></h4>
-<h4 class="date"><em>9/4/2017</em></h4>
+<h4 class="date"><em>9/11/2017</em></h4>
 
 </div>
 
 
-<div id="data-source" class="section level2">
-<h2>Data Source</h2>
-<p>The data will be retrieved from the github repo linked by Jeff. As far as I can tell there aren’t any “write-ups” persay, but we can analyze individuals’ R code. To that extent, we need simply search each individuals’ repo for the file “run_analysis.R”.</p>
-<p>However, I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply sourced this document with their “run_analysis.R” file.</p>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
 </div>
+<div id="data-location" class="section level1">
+<h1>Data Location</h1>
+<p>Note: This is an initial pass. Depending on how many “non-standard” file paths I run into, I may hav eto revise this portion of the data retrieval process. I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply sourced this document with their “run_analysis.R” file.</p>
+<p>The data will be retrieved from the github repo linked by Jeff (<a href="http://jtleek.com/advdatasci/" class="uri">http://jtleek.com/advdatasci/</a>). The analysis will be performed on individuals “run_analysis.R” files. The code checks for non-standard capitalization (i.e. Run vs RUN vs run). To find these files, we do an exhaustive check of folder pathways in individuals’ repositories.</p>
+</div>
+<div id="data-retrieval" class="section level1">
+<h1>Data Retrieval</h1>
 <div id="scientific-question" class="section level2">
 <h2>Scientific Question</h2>
 <p>Ultimately, I think the scientific question we’re asking here is how can we quantify the differences in the way people write code.</p>
@@ -135,6 +140,7 @@ $(document).ready(function () {
 <div id="current-plan-of-attack" class="section level2">
 <h2>Current plan of attack</h2>
 <p>It seems to me like a logical place to start in terms of explaining the variability in how individuals solved this problem will be in the number of function calls they made, as well as the number of different functions they used, what packages these functions are associated with, and the “intended use” of said functions. To identify these patterns we can use do some fairly straightforward regular expression parsing. Depending on the number of unique functions</p>
+</div>
 </div>
 
 
