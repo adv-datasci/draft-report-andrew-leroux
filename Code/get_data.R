@@ -1,22 +1,44 @@
 rm(list=ls())
 library(dplyr)
 library(gh)
+library(lubridate)
 ### For help navigating the github API: https://developer.github.com/v3/search/
 
 
 token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
 
-### Only 100 results per page (the max). Change page=1 parameter to get all the repositories.
+### Only 100 results per page (the max). 
+### Search by range of dates created -- 1 week periods. Should be able to grab them all
 
-page <- 1
-x <- repos <- c()
-## get all repo names
-while(!"try-error" %in% class(x)){
-        x     <- gh("GET /search/repositories?q=getting+and+cleaning+data&per_page=100",page=page, .token=token)
-        repos <- c(repos, vapply(x[[3]], "[[", character(1), "full_name"))
-        page <- page + 1
-        
-        Sys.sleep(5)
+
+date_start <- ymd("2010-01-01")        ## start date
+day_inc    <- 7                        ## increment days by 7 at a time
+dates <- c(); i <- 1
+while(date_start < Sys.Date() - (day_inc+1)) {
+        dates[[i]] <- c(rep(date_start,2) %m+% c(days(-1),days(day_inc+1)))
+        date_start <- date_start + days(day_inc + 1)
+        i <- i + 1
+}
+rm(list=c("date_start","i","day_inc"))
+
+dates <- dates[c(1:3)]
+
+repos <- c()
+for(i in 1:length(dates)){
+        page <- 1
+        x <- c()
+        gh_date <- paste("created:", paste(dates[[i]], collapse=".."), sep="")
+        ## get all repo names
+        for(k in 1:10){
+                gh_get <- paste("GET /search/repositories?q=getting+and+cleaning+data+",gh_date, "&per_page=100", sep="")
+                x     <- try(gh(gh_get, page=k, .token=token))
+                
+                if("try-error" %in% class(x)) break
+                
+                repos <- c(repos, vapply(x[[3]], "[[", character(1), "full_name"))
+                
+        }
+        Sys.sleep(60)
 }
 
 
