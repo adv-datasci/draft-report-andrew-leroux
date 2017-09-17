@@ -1,27 +1,36 @@
-library("gh")
-my_repos <- gh("/users/andrew-leroux/repos", type = "public")
-vapply(my_repos, "[[", "", "name")
-
-
-#install_github("r-lib/gh")
+rm(list=ls())
 library(dplyr)
 library(gh)
 ### For help navigating the github API: https://developer.github.com/v3/search/
 
+
+token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
+
 ### Only 100 results per page (the max). Change page=1 parameter to get all the repositories.
-x <- gh("GET /search/repositories?q=getting+and+cleaning+data&per_page=100", page=1)
-repos <- sapply(x[[3]], "[[", "full_name")
 
-### For an example, I will only load in one repo
-repo <- repos[5]
+page <- 1
+x <- repos <- c()
+## get all repo names
+while(!"try-error" %in% class(x)){
+        x     <- gh("GET /search/repositories?q=getting+and+cleaning+data&per_page=100",page=page, .token=token)
+        repos <- c(repos, vapply(x[[3]], "[[", character(1), "full_name"))
+        page <- page + 1
+        
+        Sys.sleep(5)
+}
 
-### NOTE: Need to create a personal access authentication token for using GET /seach/code!!!
-### Do this here: https://github.com/settings/tokens
 
-### !If saving the token to a file like this, make sure it's in your .gitignore!
-token <- readLines(".githubtoken")
-string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
-res <- gh::gh(string, .token=token)
+## loop over recovered repos to get run_analysis.R
+for(i in repos){
+        repo <- repos[i]
+        string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
+        res <- gh::gh(string, .token=token)
+        
+}
+
+
+
+
 
 ### This assumes there will only be a single .R file (run_analysis.R).
 ### You will run into trouble if the user has multiple .R files
@@ -42,6 +51,17 @@ length(execode)
 
 ### What libraries are used?
 execode[grep("library\\(", execode)]
+
+
+
+## Step 1: Get all the .R files
+##         Count number of individuals who this fails for
+##         
+
+### Create a function which will
+## 1) Extract librarys used (using either library or require)
+
+
 
 
 
