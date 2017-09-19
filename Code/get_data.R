@@ -11,8 +11,8 @@ token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
 ### Search by range of dates created -- 1 week periods. Should be able to grab them all
 
 
-date_start <- ymd("2010-01-01")        ## start date
-day_inc    <- 7                        ## increment days by 7 at a time
+date_start <- ymd("2015-01-01")        ## start date
+day_inc    <- 14                       ## increment days by 14 at a time
 dates <- c(); i <- 1
 while(date_start < Sys.Date() - (day_inc+1)) {
         dates[[i]] <- c(rep(date_start,2) %m+% c(days(-1),days(day_inc+1)))
@@ -21,7 +21,8 @@ while(date_start < Sys.Date() - (day_inc+1)) {
 }
 rm(list=c("date_start","i","day_inc"))
 
-dates <- dates[c(1:3)]
+
+print(length(dates))
 
 repos <- c()
 for(i in 1:length(dates)){
@@ -39,14 +40,22 @@ for(i in 1:length(dates)){
                 
         }
         Sys.sleep(60)
+        print(i)
 }
-
 
 ## loop over recovered repos to get run_analysis.R
 for(i in repos){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
         res <- gh::gh(string, .token=token)
+        
+        path <- try(res[[3]][[1]]$path)
+        
+        if("try-error" %in% class(path)) next
+        code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path)
+        
+        code <- code.url %>% readLines()
+        head(code)
         
 }
 
