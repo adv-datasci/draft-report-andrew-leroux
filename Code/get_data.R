@@ -19,6 +19,7 @@ while(date_start < Sys.Date() - (day_inc+1)) {
 }
 rm(list=c("date_start","i","day_inc"))
 
+dates <- dates[c(1:3)]
 
 repos <- date_repo <- c()
 for(i in 1:length(dates)){
@@ -36,9 +37,9 @@ for(i in 1:length(dates)){
                 
         }
         delta_repos <- length(repos) - repo_len_start
-        date_repo   <- c(date_repo, rep(dates[[i]][1], delta_repos))
+        date_repo   <- c(date_repo, rep(i, delta_repos))
         
-        Sys.sleep(120)
+        Sys.sleep(60)
         print(i)
 }
 rm(list=c("delta_repos","gh_get","x","repo_len_start","gh_date","i"))
@@ -52,7 +53,7 @@ for(i in 1:length(repos)){
 
 
 ## loop over recovered repos to get run_analysis.R
-for(i in length(repos)){
+for(i in 1:length(repos)){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
         res <- gh::gh(string, .token=token)
@@ -62,12 +63,12 @@ for(i in length(repos)){
         
         if("try-error" %in% class(path)) next
         
-        for(k in 1:paths_len){
+        for(k in 1:length(res[[3]])){
                 path_cur  <- res[[3]][[k]]$path
                 file_name_inx <- c(gregexpr("/[aA-zZ]+?.[rR]",path_cur)[[1]][1], nchar(path_cur))
                 file_name <- substr(path_cur, file_name_inx[1]+1, file_name_inx[2])
                 
-                if(tolower(file_name) != "run_analysis") next
+                if(tolower(file_name) != "run_analysis.r") next
                 
                 has_code <- TRUE
                 
@@ -76,14 +77,72 @@ for(i in length(repos)){
         if(!has_code) next
         
         code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path_cur)
-        code[[i]] <- readLines(code.url)
+        code[[i]] <- trimws(readLines(code.url))
         
+        Sys.sleep(5)
+        print(i)
+}
+
+
+
+
+getInfo <- function(x){
+        ## number of lines of code + number of lines of comments only + number of blank lines
+        n_lines         <- length(x)
+        comment_line    <- which(grepl("^#", x))
+        blank_line      <- sum(nchar(x)==0)
+        
+        
+        
+        n_comment_lines <- length(x[comment_line])
+        n_char_tot      <- sum(vapply(x,nchar,numeric(1)))
+        n_char_comm     <- sum(vapply(x[comment_line], nchar, numeric(1)))
+        
+        is_assign2 <- grepl("^[aA-zZ]+[1-9]?(<-||=)",x)
+        is_assign <- grepl("[aA-zZ]+? <-", x) | grepl("[aA-zZ]+? = ", x)
+        assign_names <-  gregexpr("[aA-zZ]+ [<-|=]",x)
+                
+        
+        ## handle named functions and subsetting separately
+        named_fn_loc <- gregexpr("[aA-zZ]+.?[aA-zZ]+([1-9]+)?\\(",x)
+        fn_names <- sapply(1:n_lines, function(y){
+                tmp <- named_fn_loc[y][[1]]
+                if(tmp[1] == -1) return(NULL)
+                
+                ret <- c()
+                for(k in 1:length(tmp)){
+                        ret <- c(ret,substr(x[y], tmp[k], tmp[k]+attributes(tmp)$match.length[k]-2))
+                }
+                
+                ret
+        })
+        
+        ## subsetting includes $ and [!
+        
+        ## use to_lower to assess how many uppercase characters in their naming 
+        c(gregexpr("[aA-zZ]+?.[rR]",path_cur)[[1]][1], nchar(path_cur))        
+}
+
+for(i in 1:length(code)){
         
 }
 
 
 
-        
+
+## get number of lines of code
+## get number of commented lines of code
+## get number of total characters
+## get number of characters in commented code
+## get assignment operators
+##    - distinguish between <- and = 
+## get unique functions
+## get unique variable names
+##    - capture number of times write to the same name
+## get number of 
+
+
+
 
 
 
@@ -98,7 +157,7 @@ code <- code.url %>% readLines()
 head(code)
 
 ### number of commented lines
-sum(grepl("^#", code))
+sum(grepl("^#", code[[1]]))
 
 execode <- code[!grepl("^#", code) & code != ""]
 ### lines of executable code
