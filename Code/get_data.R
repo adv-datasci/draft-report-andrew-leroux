@@ -89,22 +89,29 @@ for(i in 1:length(repos)){
 
 
 get_data <- function(x){
+        if(is.na(x)) return(NA)
+        
         ## number of lines of code + number of lines of comments only + number of blank lines
         n_lines         <- length(x)
         comment_line    <- grepl("^#", x)
         blank_line      <- (nchar(x)==0)
         n_char_tot      <- vapply(x,nchar,numeric(1))
         
-        is_assign <- grepl("^[a-zA-Z]+[1-9]* *<- *", x) | grepl("^[a-zA-Z]+[1-9]* *= *", x)
+        is_assign <- grepl("^[a-zA-Z]+[0-9]* *<- *", x) | grepl("^[a-zA-Z]+[0-9]* *= *", x)
         ## need to extract only the first bit
-        assign_name_loc <-  gregexpr("^[aA-zZ]+[1-9]* *[<-|=]",x)
-        assign_names <- vapply(1:nlines, function(y){
+        assign_name_loc <-  gregexpr("^[a-zA-Z]+[0-9]*(\\([a-zA-Z]+[0-9]*\\))? *([<-]|[=])",x)
+        assign_names <- vapply(1:n_lines, function(y){
                 tmp <- assign_name_loc[y][1]
                 ## match fail if length is greater than 1
-                if(!(tmp[1] %in% 1) | length(tmp[1]) > 1) return(NULL)
+                if(!(tmp[1] %in% 1) | length(tmp[1]) > 1) return(NA_character_)
                 
-                substr(x, x[1])
+                # name_only <- gregexpr("^[a-zA-Z]+[0-9]*",x[y])
+                name_only <- gregexpr("^[a-zA-Z]+[0-9]*(\\([a-zA-Z]+[0-9]*\\))?",x[y])
+                trimws(substr(x[y], 1, attributes(name_only[[1]])$match.length))
         },character(1))        
+        
+        assignment_object <- ifelse(grepl("\\(",assign_names),0,1)
+        assignment_object[is.na(assign_names)] <- NA
 
         ###########################################
         ## get names of top-level functions used ##
@@ -149,20 +156,23 @@ get_data <- function(x){
                           "comment_line" = comment_line,
                           "n_characters" = n_char_tot,
                           "assignment" = is_assign,
-                          "assignment_name" = 1,
+                          "assignment_name" = assign_names,
+                          "assignment_object" = assignment_object,
                           "named_functions" = I(mat_named_func),
                           "subset_functions" = I(mat_sub_func))     
+        
+        ret
 }
 
 
 
+test <- sapply(code, get_data)
+
+test <- c()
 
 for(i in 1:length(code)){
-        
+        test[[i]] <- get_data(code[[i]])
 }
-
-
-
 
 ## get number of lines of code
 ## get number of commented lines of code
