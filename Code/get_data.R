@@ -77,7 +77,8 @@ for(i in 1:length(repos)){
         if(!has_code) next
         
         code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path_cur)
-        code[[i]] <- trimws(readLines(code.url))
+        code[[i]] <- gsub("\\\\", "", trimws(readLines(code.url)))
+        
         
         Sys.sleep(5)
         print(i)
@@ -86,42 +87,75 @@ for(i in 1:length(repos)){
 
 
 
-getInfo <- function(x){
+
+get_data <- function(x){
         ## number of lines of code + number of lines of comments only + number of blank lines
         n_lines         <- length(x)
-        comment_line    <- which(grepl("^#", x))
-        blank_line      <- sum(nchar(x)==0)
+        comment_line    <- grepl("^#", x)
+        blank_line      <- (nchar(x)==0)
+        n_char_tot      <- vapply(x,nchar,numeric(1))
         
-        
-        
-        n_comment_lines <- length(x[comment_line])
-        n_char_tot      <- sum(vapply(x,nchar,numeric(1)))
-        n_char_comm     <- sum(vapply(x[comment_line], nchar, numeric(1)))
-        
-        is_assign2 <- grepl("^[aA-zZ]+[1-9]?(<-||=)",x)
-        is_assign <- grepl("[aA-zZ]+? <-", x) | grepl("[aA-zZ]+? = ", x)
-        assign_names <-  gregexpr("[aA-zZ]+ [<-|=]",x)
+        is_assign <- grepl("^[a-zA-Z]+[1-9]* *<- *", x) | grepl("^[a-zA-Z]+[1-9]* *= *", x)
+        ## need to extract only the first bit
+        assign_name_loc <-  gregexpr("^[aA-zZ]+[1-9]* *[<-|=]",x)
+        assign_names <- vapply(1:nlines, function(y){
+                tmp <- assign_name_loc[y][1]
+                ## match fail if length is greater than 1
+                if(!(tmp[1] %in% 1) | length(tmp[1]) > 1) return(NULL)
                 
+                substr(x, x[1])
+        },character(1))        
+
+        ###########################################
+        ## get names of top-level functions used ##
+        ##   note: this will not capture fns     ##
+        ##     used in side apply type fns       ##   
+        ###########################################
         
-        ## handle named functions and subsetting separately
-        named_fn_loc <- gregexpr("[aA-zZ]+.?[aA-zZ]+([1-9]+)?\\(",x)
-        fn_names <- sapply(1:n_lines, function(y){
-                tmp <- named_fn_loc[y][[1]]
-                if(tmp[1] == -1) return(NULL)
-                
-                ret <- c()
-                for(k in 1:length(tmp)){
-                        ret <- c(ret,substr(x[y], tmp[k], tmp[k]+attributes(tmp)$match.length[k]-2))
-                }
-                
-                ret
-        })
+        ## create a duplicate of "x" which replaces [ with white space
+        ## note this will grab things like mean() which we dont want! try to fix later
+        x_wo_sub <- gsub("\\[", "       ", x)
+        # named_fn_loc <- gregexpr("[A-Za-z]+[1-9]*.{0,1}[A-Za-z]+[1-9]*\\(",x_wo_sub)
         
+        named_fn_loc <- gregexpr("\\[*[A-Za-z]+[1-9]*.{0,1}[A-Za-z]+[1-9]*\\(",x_wo_sub)
         ## subsetting includes $ and [!
+        subset_fn_loc <- gregexpr("( *\\[+ *[A-Za-z]+[1-9]*)|(\\$[A-Za-z]+)", x)
         
-        ## use to_lower to assess how many uppercase characters in their naming 
-        c(gregexpr("[aA-zZ]+?.[rR]",path_cur)[[1]][1], nchar(path_cur))        
+        max_named_func <- max(vapply(named_fn_loc,length, numeric(1)))
+        max_sub_func   <- max(vapply(subset_fn_loc,length, numeric(1)))
+        
+        mat_named_func <- matrix(NA, ncol=max_named_func, nrow=n_lines)
+        mat_sub_func   <- matrix(NA, ncol=max_sub_func, nrow=n_lines)
+        
+        for(n in 1:n_lines){
+                tmp     <- named_fn_loc[n][[1]]
+                tmp_sub <- subset_fn_loc[n][[1]]
+                
+                if(tmp[1] != -1){
+                        for(k in 1:length(tmp)){
+                                mat_named_func[n,k] <- substr(x_wo_sub[n], tmp[k], 
+                                                              tmp[k]+attributes(tmp)$match.length[k]-2)
+                        }
+                }
+                if(tmp_sub[1] != -1){
+                        for(k in 1:length(tmp_sub)){
+                                mat_sub_func[n,k] <- substr(x[n], tmp_sub[k], tmp_sub[k])
+                        }
+                }
+        }
+        
+        ret <- data.frame("line" = c(1:n_lines),
+                          "blank_line" = blank_line,
+                          "comment_line" = comment_line,
+                          "n_characters" = n_char_tot,
+                          "assignment" = is_assign,
+                          "assignment_name" = 1,
+                          "named_functions" = I(mat_named_func),
+                          "subset_functions" = I(mat_sub_func))     
 }
+
+
+
 
 for(i in 1:length(code)){
         
@@ -141,39 +175,6 @@ for(i in 1:length(code)){
 ##    - capture number of times write to the same name
 ## get number of 
 
-
-
-
-
-
-### This assumes there will only be a single .R file (run_analysis.R).
-### You will run into trouble if the user has multiple .R files
-### Some users (like the most popular in repos[1]) have their work in an .Rmd that
-### is sourced by run_analysis.R. Think how you would handle that too.
-path <- res[[3]][[1]]$path
-code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path)
-
-code <- code.url %>% readLines()
-head(code)
-
-### number of commented lines
-sum(grepl("^#", code[[1]]))
-
-execode <- code[!grepl("^#", code) & code != ""]
-### lines of executable code
-length(execode)
-
-### What libraries are used?
-execode[grep("library\\(", execode)]
-
-
-
-## Step 1: Get all the .R files
-##         Count number of individuals who this fails for
-##         
-
-### Create a function which will
-## 1) Extract librarys used (using either library or require)
 
 
 
