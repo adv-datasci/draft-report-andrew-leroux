@@ -9,7 +9,7 @@ token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
 
 ### Only 100 results per page (the max). 
 ### Search by range of dates created -- 1 week periods. Should be able to grab them all
-date_start <- ymd("2016-01-01")        ## start date
+date_start <- ymd("2015-12-01")        ## start date
 day_inc    <- 14                       ## increment days by 14 at a time
 dates <- c(); i <- 1
 while(date_start < Sys.Date() - (day_inc+1)) {
@@ -19,7 +19,6 @@ while(date_start < Sys.Date() - (day_inc+1)) {
 }
 rm(list=c("date_start","i","day_inc"))
 
-dates <- dates[c(1:3)]
 
 repos <- date_repo <- c()
 for(i in 1:length(dates)){
@@ -77,10 +76,11 @@ for(i in 1:length(repos)){
         if(!has_code) next
         
         code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path_cur)
+        code.url <- gsub(" ", "%20", code.url)
         code[[i]] <- gsub("\\\\", "", trimws(readLines(code.url)))
         
         
-        Sys.sleep(5)
+        Sys.sleep(2)
         print(i)
 }
 
@@ -88,13 +88,21 @@ for(i in 1:length(repos)){
 
 
 
+## BAD:::  https://github.com/uanyanti/gettingandcleaningdata/
+## try on nchar() is to exclude bad encoding files -- limitaiton
+
+
+
 get_data <- function(x){
-        if(is.na(x)) return(NA)
+        if(length(x) == 1 & is.na(x[1])) return(NA)
         
         ## number of lines of code + number of lines of comments only + number of blank lines
         n_lines         <- length(x)
         comment_line    <- grepl("^#", x)
-        blank_line      <- (nchar(x)==0)
+        blank_line      <- try(nchar(x)==0)
+        
+        if("try-error" %in% class(blank_line)) return(NA)
+        
         n_char_tot      <- vapply(x,nchar,numeric(1))
         
         is_assign <- grepl("^[a-zA-Z]+[0-9]* *<- *", x) | grepl("^[a-zA-Z]+[0-9]* *= *", x)
@@ -122,11 +130,19 @@ get_data <- function(x){
         ## create a duplicate of "x" which replaces [ with white space
         ## note this will grab things like mean() which we dont want! try to fix later
         x_wo_sub <- gsub("\\[", "       ", x)
-        # named_fn_loc <- gregexpr("[A-Za-z]+[1-9]*.{0,1}[A-Za-z]+[1-9]*\\(",x_wo_sub)
         
-        named_fn_loc <- gregexpr("\\[*[A-Za-z]+[1-9]*.{0,1}[A-Za-z]+[1-9]*\\(",x_wo_sub)
-        ## subsetting includes $ and [!
-        subset_fn_loc <- gregexpr("( *\\[+ *[A-Za-z]+[1-9]*)|(\\$[A-Za-z]+)", x)
+        ## this works almost, but we really want to capture the quotations
+        ## can't do this explicitl, use gsub "hack"
+        # named_fn_loc <- gregexpr("\\[*[A-Za-z]+[1-9]*.{0,1}[A-Za-z]+[1-9]*\\([^)]",x_wo_sub) 
+        
+        fn_patt <- "[A-Za-z]+[0-9]*.{0,1}[A-Za-z]+[0-9]*\\("
+        named_fn_loc <- gregexpr(paste("(^",fn_patt,")","|([,|=|-| |^]{1} *[^\"]\\[*", fn_patt,")", sep=""),x_wo_sub)
+        # named_fn_loc <- gregexpr("[,|=|-| |^]{1} *[^\"]\\[*[A-Za-z]+[0-9]*.{0,1}[A-Za-z]+[0-9]*\\([^)]",x_wo_sub)
+        
+        ## subsetting includes $ and [
+        subset_fn_loc <- gregexpr("( *\\[+ *[A-Za-z]+[0-9]*)|(\\$[A-Za-z]+)", x)
+        
+        
         
         max_named_func <- max(vapply(named_fn_loc,length, numeric(1)))
         max_sub_func   <- max(vapply(subset_fn_loc,length, numeric(1)))
@@ -150,6 +166,8 @@ get_data <- function(x){
                         }
                 }
         }
+        # str(mat_named_func)
+        
         
         ret <- data.frame("line" = c(1:n_lines),
                           "blank_line" = blank_line,
@@ -159,35 +177,53 @@ get_data <- function(x){
                           "assignment_name" = assign_names,
                           "assignment_object" = assignment_object,
                           "named_functions" = I(mat_named_func),
-                          "subset_functions" = I(mat_sub_func))     
+                          "subset_functions" = I(mat_sub_func),
+                          stringsAsFactors = FALSE)     
         
         ret
 }
 
 
+## get features of the data from raw code
+processed_list <- sapply(code, get_data)
 
-test <- sapply(code, get_data)
+## get max number of columns for named and subset funcitons, respectively 
+max_fns        <- vapply(processed_list, function(x){
+        if(is.na(x)) return(c(NA,NA))
+        c(ncol(x$named_functions),ncol(x$subset_functions))
+}, numeric(2))
+max_named <- max(max_fns[1,], na.rm=TRUE)
+max_subset<- max(max_fns[2,], na.rm=TRUE)
 
-test <- c()
+
+
+## create our final, tidy data matrix
+data       <- c()
+named_mat  <- c()
+subset_mat <- c()
 
 for(i in 1:length(code)){
-        test[[i]] <- get_data(code[[i]])
+        if(is.na(code[[i]][1])) next
+        
+        tmp  <- data.frame("repo"=repos[i], 
+                           "date"=date_repo[i],
+                           processed_list[[i]], 
+                           stringsAsFactors = FALSE)
+        data <- rbind.data.frame(data, tmp[,-c(10:11)])
+        
+        
+        d_named <- max_named - ncol(tmp[,10])
+        d_subset <- max_subset - ncol(tmp[,11])
+        if(d_named > 0) for(j in 1:d_named) tmp[,10] <- cbind(tmp[,10], NA)
+        if(d_subset > 0) for(j in 1:d_subset) tmp[,11] <- cbind(tmp[,11], NA)
+
+
+        named_mat <- rbind.data.frame(named_mat, unclass(tmp[,c(10)]),stringsAsFactors = FALSE)
+        subset_mat <- rbind.data.frame(subset_mat, unclass(tmp[,c(11)]),stringsAsFactors = FALSE)
 }
 
-## get number of lines of code
-## get number of commented lines of code
-## get number of total characters
-## get number of characters in commented code
-## get assignment operators
-##    - distinguish between <- and = 
-## get unique functions
-## get unique variable names
-##    - capture number of times write to the same name
-## get number of 
-
-
-
-
+data$named_functions <- I(as.matrix(named_mat))
+data$subset_functions <- I(as.matrix(subset_mat))
 
 
 
