@@ -20,7 +20,7 @@ while(date_start < Sys.Date() - (day_inc+1)) {
 rm(list=c("date_start","i","day_inc"))
 
 
-repos <- date_repo <- c()
+repos <- branch <- score <- date_repo <- c()
 for(i in 1:length(dates)){
         gh_date        <- paste("created:", paste(dates[[i]], collapse=".."), sep="")
         repo_len_start <- length(repos)
@@ -32,7 +32,9 @@ for(i in 1:length(dates)){
                 
                 if("try-error" %in% class(x)) break
                 
-                repos <- c(repos, vapply(x[[3]], "[[", character(1), "full_name"))
+                repos  <- c(repos, vapply(x[[3]], "[[", character(1), "full_name"))
+                branch <- c(branch, vapply(x[[3]], "[[", character(1), "default_branch"))
+                score  <- c(score, vapply(x[[3]], "[[", numeric(1), "score"))
                 
         }
         delta_repos <- length(repos) - repo_len_start
@@ -42,6 +44,8 @@ for(i in 1:length(dates)){
         print(i)
 }
 rm(list=c("delta_repos","gh_get","x","repo_len_start","gh_date","i"))
+
+# save.image("~/Desktop/repos.Rdata")
 
 
 ## create empty list to hold data
@@ -70,17 +74,20 @@ for(i in 1:length(repos)){
                 if(tolower(file_name) != "run_analysis.r") next
                 
                 has_code <- TRUE
+                break
                 
         }
         
         if(!has_code) next
         
-        code.url <- file.path("https://raw.githubusercontent.com",repo, "master", path_cur)
+        ## THIS IS A PROBLEM IF SOMEONE DECIDES TO CHANGE THE NAME OF THEIR MASTER REPO
+        code.url <- file.path("https://raw.githubusercontent.com",repo, branch[i], path_cur)
+        
         code.url <- gsub(" ", "%20", code.url)
         code[[i]] <- gsub("\\\\", "", trimws(readLines(code.url)))
         
         
-        Sys.sleep(2)
+        Sys.sleep(5)
         print(i)
 }
 
