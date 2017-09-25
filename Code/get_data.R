@@ -7,7 +7,7 @@ library(lubridate)
 
 token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
 
-### Only 100 results per page (the max). 
+### Only 1000 results per page (the max). 
 ### Search by range of dates created -- 1 week periods. Should be able to grab them all
 date_start <- ymd("2015-12-01")        ## start date
 day_inc    <- 14                       ## increment days by 14 at a time
@@ -56,6 +56,7 @@ for(i in 1:length(repos)){
 
 
 ## loop over recovered repos to get run_analysis.R
+## issue with "jamescooksley/GettingandCleaningDataCourseProject" repo number 5349
 for(i in 1:length(repos)){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
@@ -66,10 +67,13 @@ for(i in 1:length(repos)){
         
         if("try-error" %in% class(path)) next
         
+        has_code <- FALSE
         for(k in 1:length(res[[3]])){
                 path_cur  <- res[[3]][[k]]$path
                 file_name_inx <- c(gregexpr("/[aA-zZ]+?.[rR]",path_cur)[[1]][1], nchar(path_cur))
                 file_name <- substr(path_cur, file_name_inx[1]+1, file_name_inx[2])
+                
+                
                 
                 if(tolower(file_name) != "run_analysis.r") next
                 
@@ -87,7 +91,7 @@ for(i in 1:length(repos)){
         code[[i]] <- gsub("\\\\", "", trimws(readLines(code.url)))
         
         
-        Sys.sleep(5)
+        Sys.sleep(10)
         print(i)
 }
 
