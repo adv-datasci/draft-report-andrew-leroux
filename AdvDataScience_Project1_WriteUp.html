@@ -126,13 +126,25 @@ $(document).ready(function () {
 <div id="methods" class="section level2">
 <h2>Methods</h2>
 </div>
-<div id="data-location" class="section level1">
-<h1>Data Location</h1>
-<p>Note: This is an initial pass. Depending on how many “non-standard” file paths I run into, I may hav eto revise this portion of the data retrieval process. I have seen at least one student (Benjamin Chan) who put most of their R code into a their Markdown document, then simply sourced this document with their “run_analysis.R” file.</p>
-<p>The data will be retrieved from the github repo linked by Jeff (<a href="http://jtleek.com/advdatasci/" class="uri">http://jtleek.com/advdatasci/</a>). The analysis will be performed on individuals “run_analysis.R” files. The code checks for non-standard capitalization (i.e. Run vs RUN vs run). To find these files, we do an exhaustive check of folder pathways in individuals’ repositories.</p>
+<div id="raw-data-location-and-retrieval" class="section level1">
+<h1>Raw Data Location and Retrieval</h1>
+<p>The data was retrieved from Github. The data was retrived over the 72 hour period period 10/02/2017-10/04/2017. All data retreival and analyses were performed in {} ({add pacakge + R citation}). At a high level, the retrieval procedure followed the two steps below</p>
+<ul>
+<li>Use the <em>gh</em> package available ({add pacakge citation}) to find all repos associated with the class which were created on or after 12/01/2007</li>
+<li>Use the <em>gh</em> package to search the repos discovered in the previous step for a file called “run_analysis.R”. Then scrape the data using the url structure implied by the location of the “run_analysis.R” file using the <em>readlines</em> function</li>
+</ul>
+<p>More detailed information on each of these steps is provided below.</p>
 </div>
-<div id="data-retrieval" class="section level1">
-<h1>Data Retrieval</h1>
+<div id="finding-repo-names" class="section level1">
+<h1>Finding Repo Names</h1>
+<p>Searching for repos associated with the getting and cleaning data class results in over 30,000 search results. However, the github API will only report up to 1,000 search results. To get around this, we searched repos by date of creation considering periods of two weeks. The creation dates examined spanned the dates 12/01/2007-10/02/2017. The justification for the start date was based on the start of the creation date of the class as well as some manual exploration which suggested the search results turned up zero entries for reasonable creation dates beyond this period. Note that using a 2 week moving window we never hit the 1,000 search result limit, implying that our window was sufficiently high resolution for this data. In another application (or for the class going forward), this window may need to shrink in order to capture all repos created during the search window.</p>
+<p>The exact repo search was performed using the query: “GET /search/repositories?q=getting+and+cleaning+data+<strong>repo_date</strong>&amp;per_page=100” where <strong>repo_date</strong> is of the form “created:2007-11-31..2007-12-15” to get repos created anytime during the two week period 12/01/2007-12/14/2007.</p>
+<p>We note that one limitation of our procedure is that any repos created prior to 12/01/2007 would not be included in our analysis. However, since this date is prior to the creation of the class, in order for someone to be missed using this procedure, they would’ve had to rename or repurpose an existing repo. We believe this to be unlikely, but note that it is a possiblity.</p>
+</div>
+<div id="scraping-the-data" class="section level1">
+<h1>Scraping the Data</h1>
+<p>To scrape the data, we looped over the repos found in the previous step and searched their (entire) repository for a file called “run_analysis.R”. To do so we used the following search query in the <strong>gh()</strong> function: “GET /search/code?q=repo:<strong>repo_name</strong>+extension:r” where <strong>repo_name</strong> is the repository name. This will search the entire repository for any .R files.</p>
+<p>We then used regular expressions (<em>gregexpr</em>) to find whether any of these .R files matched “run_analysis.r” by using the <em>to.lower</em> function in R to allow for various capitalizated letters and still match. Fianlly, we scraped the “run_analysis.R” file using the <em>readlines</em> function on the approraite url based on the file name, repository name and branch name.</p>
 <div id="scientific-question" class="section level2">
 <h2>Scientific Question</h2>
 <p>Ultimately, I think the scientific question we’re asking here is how can we quantify the differences in the way people write code.</p>

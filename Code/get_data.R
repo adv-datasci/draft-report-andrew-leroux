@@ -45,7 +45,7 @@ for(i in 1:length(dates)){
 }
 rm(list=c("delta_repos","gh_get","x","repo_len_start","gh_date","i"))
 
-# save.image("~/Desktop/repos.Rdata")
+# save.image("../repos.Rdata")
 
 
 ## create empty list to hold data
@@ -107,7 +107,8 @@ for(i in 1:length(repos)){
 
 
 get_data <- function(x){
-        if(length(x) == 1 & is.na(x[1])) return(NA)
+        if(length(x) == 1 & !is.finite(x[1])) return(NA)
+        if(length(x) == 0) return(NA)
         
         ## number of lines of code + number of lines of comments only + number of blank lines
         n_lines         <- length(x)
@@ -201,9 +202,9 @@ get_data <- function(x){
 processed_list <- sapply(code, get_data)
 
 ## get max number of columns for named and subset funcitons, respectively 
-max_fns        <- vapply(processed_list, function(x){
-        if(is.na(x)) return(c(NA,NA))
-        c(ncol(x$named_functions),ncol(x$subset_functions))
+max_fns        <- vapply(seq_along(processed_list), function(x){
+        if(!is.finite(processed_list[[x]][[1]])) return(c(NA,NA))
+        c(ncol(processed_list[[x]]$named_functions),ncol(processed_list[[x]]$subset_functions))
 }, numeric(2))
 max_named <- max(max_fns[1,], na.rm=TRUE)
 max_subset<- max(max_fns[2,], na.rm=TRUE)
