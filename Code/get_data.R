@@ -216,7 +216,7 @@ data       <- c()
 named_mat  <- c()
 subset_mat <- c()
 
-for(i in 1:length(code)){
+for(i in 8241:length(code)){
         if(is.na(code[[i]][1]) | is.na(processed_list[[i]])[1]) next
         
         tmp  <- data.frame("repo"=repos[i], 
@@ -235,6 +235,8 @@ for(i in 1:length(code)){
 
         named_mat <- rbind.data.frame(named_mat, unclass(tmp[,c(11)]),stringsAsFactors = FALSE)
         subset_mat <- rbind.data.frame(subset_mat, unclass(tmp[,c(12)]),stringsAsFactors = FALSE)
+        
+        print(i)
 }
 
 data$named_functions <- I(as.matrix(named_mat))

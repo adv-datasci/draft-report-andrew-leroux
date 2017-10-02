@@ -45,6 +45,8 @@ The exact repo search was performed using the query:
 We note that one limitation of our procedure is that any repos created prior to 12/01/2007 would not be included in our analysis. 
 However, since this date is prior to the creation of the class, in order for someone to be missed using this procedure, they would've 
 had to rename or repurpose an existing repo. We believe this to be unlikely, but note that it is a possiblity.
+Also, note that our code does not allow for repository names to have hypens in them. These individuals were excluded from our 
+analysis. These individuals number **INCLUDE NUMBER**.
 
 
 # Scraping the Data
@@ -55,11 +57,17 @@ called "run_analysis.R". To do so we used the following search query in the **gh
 This will search the entire repository for any .R files. 
 
 We then used regular expressions (*gregexpr*) to find whether 
-any of these .R files matched "run_analysis.r" by using the *to.lower* function in R to allow for various capitalizated letters and 
-still match.
-Fianlly, we scraped the "run_analysis.R" file using the *readlines* function on the approraite url based on the file name, repository name 
+any of these .R files matched "run_analysis.r" by using the *to.lower* 
+function in R to allow for various capitalizated letters and 
+still match. Finally, we scraped the "run_analysis.R" file using the *readlines* 
+function on the approraite url based on the file name, repository name 
 and branch name.
 
+We note that our code does impose some limitations. First and foremost, there were some files that we attempted to read, but 
+were found to be non- UTF8 files. We did not try to parse these files at all and they were excluded from the analysis. 
+From manual inspection, these tended to be individuals who copied and pasted R console output into a .R script and used that as 
+their final project. So these are users who, sometimes, were able to complete the task. 
+We estimate the number of these individuals to be **INCLUDE NUMBER**.
 
 
 
