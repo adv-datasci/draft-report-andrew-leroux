@@ -9,7 +9,7 @@ token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
 
 ### Only 1000 results per page (the max). 
 ### Search by range of dates created -- 1 week periods. Should be able to grab them all
-date_start <- ymd("2015-12-01")        ## start date
+date_start <- ymd("2007-12-01")        ## start date
 day_inc    <- 14                       ## increment days by 14 at a time
 dates <- c(); i <- 1
 while(date_start < Sys.Date() - (day_inc+1)) {
@@ -41,7 +41,7 @@ for(i in 1:length(dates)){
         date_repo   <- c(date_repo, rep(i, delta_repos))
         
         Sys.sleep(60)
-        print(i)
+        print(dates[i]);print(length(repos))
 }
 rm(list=c("delta_repos","gh_get","x","repo_len_start","gh_date","i"))
 
@@ -60,7 +60,9 @@ for(i in 1:length(repos)){
 for(i in 1:length(repos)){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
-        res <- gh::gh(string, .token=token)
+        res <- try(gh::gh(string, .token=token))
+        
+        if("try-error" %in% class(res)) next
         
         ## loop over this -- look for some variant of run_analysis.R
         path <- try(res[[3]][[1]]$path)
@@ -88,10 +90,10 @@ for(i in 1:length(repos)){
         code.url <- file.path("https://raw.githubusercontent.com",repo, branch[i], path_cur)
         
         code.url <- gsub(" ", "%20", code.url)
-        code[[i]] <- gsub("\\\\", "", trimws(readLines(code.url)))
+        code[[i]] <- try(gsub("\\\\", "", trimws(readLines(code.url))))
         
         
-        Sys.sleep(10)
+        Sys.sleep(sample(3:10,size=1))
         print(i)
 }
 
@@ -214,23 +216,24 @@ named_mat  <- c()
 subset_mat <- c()
 
 for(i in 1:length(code)){
-        if(is.na(code[[i]][1])) next
+        if(is.na(code[[i]][1]) | is.na(processed_list[[i]])[1]) next
         
         tmp  <- data.frame("repo"=repos[i], 
                            "date"=date_repo[i],
+                           "score"=score[i],
                            processed_list[[i]], 
                            stringsAsFactors = FALSE)
-        data <- rbind.data.frame(data, tmp[,-c(10:11)])
+        data <- rbind.data.frame(data, tmp[,-c(11:12)])
         
         
-        d_named <- max_named - ncol(tmp[,10])
-        d_subset <- max_subset - ncol(tmp[,11])
-        if(d_named > 0) for(j in 1:d_named) tmp[,10] <- cbind(tmp[,10], NA)
-        if(d_subset > 0) for(j in 1:d_subset) tmp[,11] <- cbind(tmp[,11], NA)
+        d_named <- max_named - ncol(tmp[,11])
+        d_subset <- max_subset - ncol(tmp[,12])
+        if(d_named > 0) for(j in 1:d_named) tmp[,11] <- cbind(tmp[,11], NA)
+        if(d_subset > 0) for(j in 1:d_subset) tmp[,12] <- cbind(tmp[,12], NA)
 
 
-        named_mat <- rbind.data.frame(named_mat, unclass(tmp[,c(10)]),stringsAsFactors = FALSE)
-        subset_mat <- rbind.data.frame(subset_mat, unclass(tmp[,c(11)]),stringsAsFactors = FALSE)
+        named_mat <- rbind.data.frame(named_mat, unclass(tmp[,c(11)]),stringsAsFactors = FALSE)
+        subset_mat <- rbind.data.frame(subset_mat, unclass(tmp[,c(12)]),stringsAsFactors = FALSE)
 }
 
 data$named_functions <- I(as.matrix(named_mat))
