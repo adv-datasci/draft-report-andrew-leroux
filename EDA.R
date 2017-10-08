@@ -34,7 +34,7 @@ hist(ncomments)
 plot(ncharacters_code, scores_cur)
 
 png("../pairs.png",height=1200,width=1200)
-pairs(cbind(nassign,nuassign, nsubset, nfunc, nufunc, ncharacters_code, nlines, ncomments, nblank, scores_cur))
+pairs(cbind(scores_cur,nassign,nuassign, nsubset, nfunc, nufunc, ncharacters_code, nlines, ncomments, nblank),col=rgb(0,0,0,0.2))
 dev.off()
 
 

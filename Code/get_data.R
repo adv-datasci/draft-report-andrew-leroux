@@ -57,7 +57,7 @@ for(i in 1:length(repos)){
 
 ## loop over recovered repos to get run_analysis.R
 ## issue with "jamescooksley/GettingandCleaningDataCourseProject" repo number 5349
-for(i in 1:length(repos)){
+for(i in 19050:length(repos)){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
         res <- try(gh::gh(string, .token=token))
@@ -93,7 +93,7 @@ for(i in 1:length(repos)){
         code[[i]] <- try(gsub("\\\\", "", trimws(readLines(code.url))))
         
         
-        Sys.sleep(sample(3:10,size=1))
+        Sys.sleep(sample(4:10,size=1))
         print(i)
 }
 
@@ -216,7 +216,7 @@ data       <- c()
 named_mat  <- c()
 subset_mat <- c()
 
-for(i in 8241:length(code)){
+for(i in 1:length(code)){
         if(is.na(code[[i]][1]) | is.na(processed_list[[i]])[1]) next
         
         tmp  <- data.frame("repo"=repos[i], 
