@@ -25,12 +25,12 @@ for(i in inx){
         
         
 }
-
+data$packages <- I(matrix(packages, byrow=FALSE, ncol= ncol(data$named_functions), nrow = nrow(data$named_functions)))
 
 udat <- data[!duplicated(data$repo),]
 uid <- unique(data$repo)
 
-nlines <- ncomments <- nblank <- ncharacters_code <- nassign <- nuassign <- nfunc <- nufunc <- nsubset <- rep(NA, length(uid))
+nlines <- ncomments <- nblank <- ncharacters_code <- nassign <- nuassign <- nfunc <- nufunc <- nsubset <- npackage <- rep(NA, length(uid))
 for(i in 1:length(uid)){
         tmp       <- subset(data, repo == uid[i])
         
@@ -39,32 +39,38 @@ for(i in 1:length(uid)){
         nblank[i]    <- sum(tmp$blank_line)
         ncharacters_code[i] <- sum(tmp$n_characters[!(tmp$blank_line | tmp$comment_line)])
         
+        npackage[i] <- length(na.omit(unique(tmp$packages)))
         nassign[i] <- sum(tmp$assignment, na.rm=TRUE)
         nuassign[i] <- length(na.omit(unique(tmp$assignment_name)))
         nsubset[i] <- sum(!is.na(tmp$subset_functions), na.rm=TRUE)
         nfunc[i]   <- sum(!is.na(tmp$named_functions), na.rm=TRUE)
         nufunc[i]  <- length(na.omit(unique(tmp$named_functions)))
+        
+        if(i %% 100 == 0) print(i)
 }
 
 # scores_cur <- score[1:length(uid)]
 
-par(mfrow=c(2,2))
-plot(ncharacters_code, nlines)
-hist(ncharacters_code)
-hist(nblank)
+# scores_inx <- 
 
-hist(ncomments)
-plot(ncharacters_code, scores_cur)
 
+## basic pairs plot
 png("../pairs.png",height=1200,width=1200)
 pairs(cbind(scores_cur,nassign,nuassign, nsubset, nfunc, nufunc, ncharacters_code, nlines, ncomments, nblank),col=rgb(0,0,0,0.2))
 dev.off()
 
 
 
+## biplot for data
+round(cumsum(pca$sdev^2/sum(pca$sdev^2)),3)
 
-sum(grepl("BrandonChiazza/getdata-016_courseproject",repo))
+X <- cbind(nlines, ncomments, nblank, ncharacters_code, npackage, nassign, nuassign, nsubset, nfunc, nufunc)
+pca <- prcomp(X, center=TRUE,scale=TRUE)
+X[1382,]
 
-which(repo == "BrandonChiazza/getdata-016_courseproject")
+matplot(pca$rotation,type='l')
+biplot(pca)
 
+
+summary(lm(scores~))
 
