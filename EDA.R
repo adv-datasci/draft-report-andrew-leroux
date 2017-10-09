@@ -3,8 +3,31 @@ rm(list=ls())
 # load("~/Desktop/repos.Rdata")
 load("../repos.Rdata")
 
-udat <- data[!duplicated(data$repo),]
+## need to load libraries to find certain functions
+library(plyr); library(dplyr); library(knitr); library(markdown); library(readr); library(data.table);
 
+
+vec_named <-as.vector(data$named_functions)
+packages  <- rep(NA_character_, length(vec_named))
+inx <- which(!is.na(vec_named))
+for(i in inx){
+        tmp <- find(vec_named[i], mode="function")
+        package_cur <- substring(tmp, first=9)
+        if(length(tmp) ==0) {
+                # print(vec_named[i])
+                packages[i] <- "MISSING"
+                next
+        } 
+        # if(length(tmp) > 1){
+                # print("multiple matches");print(package_cur)
+        # }
+        packages[i] <- package_cur
+        
+        
+}
+
+
+udat <- data[!duplicated(data$repo),]
 uid <- unique(data$repo)
 
 nlines <- ncomments <- nblank <- ncharacters_code <- nassign <- nuassign <- nfunc <- nufunc <- nsubset <- rep(NA, length(uid))

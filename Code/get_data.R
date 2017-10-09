@@ -239,8 +239,12 @@ for(i in 1:length(code)){
         print(i)
 }
 
-data$named_functions <- I(as.matrix(named_mat))
-data$subset_functions <- I(as.matrix(subset_mat))
+## account for possible incorrect string grabs
+data$raw_named_functions <- I(as.matrix(named_mat))
+data$named_functions     <- I(trimws(gsub("^[[:punct:]]", "", trimws(as.matrix(named_mat))))
+data$subset_functions    <- I(trimws(as.matrix(subset_mat)))
+
+
 
 
 
