@@ -198,11 +198,47 @@ We estimate the number of these individuals to be \textbf{INCLUDE NUMBER}.
 
 
 
+\section{Results}
+
+
+<<echo=FALSE>>=
+load("pca.rdata")
+
+for(k in 1:6){
+        assign(paste0("PC",k), round(pca$rotation[,k],2))
+}
+
+cpct <- 100*round(cumsum(pca$sdev^2/sum(pca$sdev^2)),3)
+pct  <- 100*round(pca$sdev^2/sum(pca$sdev^2),3)
+@
 
 
 
+\begin{table}[H]
+\begin{tabular}{lcccccc} \toprule
+Feature                                                 & PC 1 &  PC 2 & PC 3 & PC 4 & PC 5 & PC 6 \\ \cmidrule(lr){2-7}
+\# of lines of code           &  \Sexpr{PC1["nlines"]} &  \Sexpr{PC2["nlines"]} &  \Sexpr{PC3["nlines"]} &  \Sexpr{PC4["nlines"]} &  \Sexpr{PC5["nlines"]} &  \Sexpr{PC6["nlines"]}                \\
+\# of lines of comments       &  \Sexpr{PC1["ncomments"]} &  \Sexpr{PC2["ncomments"]} &  \Sexpr{PC3["ncomments"]} &  \Sexpr{PC4["ncomments"]} &  \Sexpr{PC5["ncomments"]} &  \Sexpr{PC6["ncomments"]}                \\
+\# of blank lines             &  \Sexpr{PC1["nblank"]} &  \Sexpr{PC2["nblank"]} &  \Sexpr{PC3["nblank"]} &  \Sexpr{PC4["nblank"]} &  \Sexpr{PC5["nblank"]} &  \Sexpr{PC6["nblank"]}                \\
+\# of characters of code      &  \Sexpr{PC1["ncharacters_code"]} &  \Sexpr{PC2["ncharacters_code"]} &  \Sexpr{PC3["ncharacters_code"]} &  \Sexpr{PC4["ncharacters_code"]} &  \Sexpr{PC5["ncharacters_code"]} &  \Sexpr{PC6["ncharacters_code"]}                \\
+\# of packages         &  \Sexpr{PC1["npackage"]} &  \Sexpr{PC2["npackage"]} &  \Sexpr{PC3["npackage"]} &  \Sexpr{PC4["npackage"]} &  \Sexpr{PC5["npackage"]} &  \Sexpr{PC6["npackage"]}                \\
+\# of object assignments      &  \Sexpr{PC1["nassign"]} &  \Sexpr{PC2["nassign"]} &  \Sexpr{PC3["nassign"]} &  \Sexpr{PC4["nassign"]} &  \Sexpr{PC5["nassign"]} &  \Sexpr{PC6["nassign"]}                \\
+\# of unique assignment names &  \Sexpr{PC1["nuassign"]} &  \Sexpr{PC2["nuassign"]} &  \Sexpr{PC3["nuassign"]} &  \Sexpr{PC4["nuassign"]} &  \Sexpr{PC5["nuassign"]} &  \Sexpr{PC6["nuassign"]}                \\
+\# of base subsetting used    &  \Sexpr{PC1["nsubset"]} &  \Sexpr{PC2["nsubset"]} &  \Sexpr{PC3["nsubset"]} &  \Sexpr{PC4["nsubset"]} &  \Sexpr{PC5["nsubset"]} &  \Sexpr{PC6["nsubset"]}                \\
+\# of functions called        &  \Sexpr{PC1["nfunc"]} &  \Sexpr{PC2["nfunc"]} &  \Sexpr{PC3["nfunc"]} &  \Sexpr{PC4["nfunc"]} &  \Sexpr{PC5["nfunc"]} &  \Sexpr{PC6["nfunc"]}                \\
+\# of unique functions called &  \Sexpr{PC1["nufunc"]} &  \Sexpr{PC2["nufunc"]} &  \Sexpr{PC3["nufunc"]} &  \Sexpr{PC4["nufunc"]} &  \Sexpr{PC5["nufunc"]} &  \Sexpr{PC6["nufunc"]}                \\ \midrule
+\% Variance explained            &  \Sexpr{pct[1]}  &  \Sexpr{pct[2]}  &  \Sexpr{pct[3]}  &  \Sexpr{pct[4]}  &  \Sexpr{pct[5]}  &  \Sexpr{pct[6]}                 \\
+Cumulative \% variance explained &  \Sexpr{cpct[1]} &  \Sexpr{cpct[2]}  &  \Sexpr{cpct[3]}  &  \Sexpr{cpct[4]}  &  \Sexpr{cpct[5]}  &  \Sexpr{cpct[6]}     \\ \bottomrule
+\end{tabular}
+\caption{First Six Principal Components}
+\end{table}
 
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=16cm,height=16cm]{biplots}
+\caption{Biplots for the first 4 principal components}
+\end{figure}
 
 
 

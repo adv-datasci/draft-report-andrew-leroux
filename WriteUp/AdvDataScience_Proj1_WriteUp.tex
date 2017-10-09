@@ -238,11 +238,38 @@ We estimate the number of these individuals to be \textbf{INCLUDE NUMBER}.
 
 
 
+\section{Results}
 
 
 
 
 
+
+\begin{table}[H]
+\begin{tabular}{lcccccc} \toprule
+Feature                                                 & PC 1 &  PC 2 & PC 3 & PC 4 & PC 5 & PC 6 \\ \cmidrule(lr){2-7}
+\# of lines of code           &  -0.47 &  0.15 &  0.02 &  -0.18 &  0.15 &  -0.07                \\
+\# of lines of comments       &  -0.35 &  0.11 &  -0.27 &  -0.44 &  0.21 &  0.29                \\
+\# of blank lines             &  -0.36 &  0.15 &  0.06 &  -0.35 &  0.2 &  -0.51                \\
+\# of characters of code      &  -0.34 &  0.31 &  0.28 &  0.51 &  0.02 &  -0.04                \\
+\# of packages         &  -0.1 &  -0.03 &  -0.66 &  0.28 &  -0.3 &  -0.57                \\
+\# of object assignments      &  -0.31 &  -0.54 &  0.21 &  0.04 &  0.07 &  -0.17                \\
+\# of unique assignment names &  -0.2 &  -0.68 &  0.13 &  0.14 &  0.08 &  0.01                \\
+\# of base subsetting used    &  -0.19 &  0.01 &  0.29 &  -0.32 &  -0.87 &  0.02                \\
+\# of functions called        &  -0.39 &  0.23 &  0.08 &  0.44 &  -0.06 &  0.24                \\
+\# of unique functions called &  -0.28 &  -0.19 &  -0.5 &  0.04 &  -0.14 &  0.49                \\ \midrule
+\% Variance explained            &  38.3  &  15.2  &  12.7  &  10.5  &  8.3  &  6.8                 \\
+Cumulative \% variance explained &  38.3 &  53.5  &  66.2  &  76.7  &  85  &  91.9     \\ \bottomrule
+\end{tabular}
+\caption{First Six Principal Components}
+\end{table}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=16cm,height=16cm]{biplots}
+\caption{Biplots for the first 4 principal components}
+\end{figure}
 
 
 

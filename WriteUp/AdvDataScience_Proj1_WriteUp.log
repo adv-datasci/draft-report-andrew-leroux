@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  8 OCT 2017 13:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  9 OCT 2017 14:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -671,36 +671,48 @@ unc-tion: ``GET /search/-code?q=repo:\OT1/cmr/bx/n/12 repo[]name\OT1/cmr/m/n/12
  +extension:r"
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 253.
-[3] [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 253.
+[3] <biplots.png, id=52, 1204.5pt x 1204.5pt>
+File: biplots.png Graphic file (type png)
+ <use biplots.png>
+Package pdftex.def Info: biplots.png used on input line 270.
+(pdftex.def)             Requested size: 455.25195pt x 455.25195pt.
+
+Overfull \hbox (21.63194pt too wide) in paragraph at lines 270--271
+ [][] 
+ []
+
+[4]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 280.
+ [5 <./biplots.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 280.
  (./AdvDataScience_Proj1_WriteUp.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 253.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 253.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 280.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 280.
 Package rerunfilecheck Info: File `AdvDataScience_Proj1_WriteUp.out' has not ch
 anged.
-(rerunfilecheck)             Checksum: 8E71D0040A5FFE6C73EE11FD0A7D737B;374.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 253.
+(rerunfilecheck)             Checksum: B7AF9C1A0378A48DEE3E81D1E61F25A0;416.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 280.
  ) 
 Here is how much of TeX's memory you used:
- 10514 strings out of 493014
- 154961 string characters out of 6133351
- 251166 words of memory out of 5000000
- 13875 multiletter control sequences out of 15000+600000
- 11372 words of font info for 42 fonts, out of 8000000 for 9000
+ 10537 strings out of 493014
+ 155238 string characters out of 6133351
+ 256166 words of memory out of 5000000
+ 13891 multiletter control sequences out of 15000+600000
+ 11718 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 36i,5n,43p,312b,325s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 36i,8n,43p,312b,344s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb>
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
 usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></us
 r/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/l
-ocal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on AdvDataScience_Proj1_WriteUp.pdf (4 pages, 93377 bytes).
+ocal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/lo
+cal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on AdvDataScience_Proj1_WriteUp.pdf (5 pages, 251769 bytes).
 PDF statistics:
- 80 PDF objects out of 1000 (max. 8388607)
- 66 compressed objects within 1 object stream
- 11 named destinations out of 1000 (max. 500000)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 98 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
+ 15 named destinations out of 1000 (max. 500000)
+ 62 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -66,10 +66,25 @@ round(cumsum(pca$sdev^2/sum(pca$sdev^2)),3)
 
 X <- cbind(nlines, ncomments, nblank, ncharacters_code, npackage, nassign, nuassign, nsubset, nfunc, nufunc)
 pca <- prcomp(X, center=TRUE,scale=TRUE)
-X[1382,]
+
+X_rm <- X[-1382,]
+pca_rm <- prcomp(X_rm, center=TRUE,scale=TRUE)
 
 matplot(pca$rotation,type='l')
-biplot(pca)
+biplot(pca, choices=1:2)
+
+png("../biplots.png",height=1200,width=1200)
+kmax <- 4
+par(mfrow=c(kmax-1,kmax-1),las=1, cex=1.15)
+for(k in 1:(kmax-1)){
+        nblank_panels <- k-1
+        if(nblank_panels > 0) for(m in 1:nblank_panels) frame()
+        for(j in (k+1):kmax){
+                biplot(pca, choices=c(k,j))
+        }
+}
+dev.off()
+
 
 
 summary(lm(scores~))
