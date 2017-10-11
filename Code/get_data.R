@@ -2,7 +2,6 @@ rm(list=ls())
 library(dplyr)
 library(gh)
 library(lubridate)
-### For help navigating the github API: https://developer.github.com/v3/search/
 
 
 token <- readLines("../AdvDataScience_Project1/github_token.txt")[1]
@@ -57,7 +56,7 @@ for(i in 1:length(repos)){
 
 ## loop over recovered repos to get run_analysis.R
 ## issue with "jamescooksley/GettingandCleaningDataCourseProject" repo number 5349
-for(i in 19050:length(repos)){
+for(i in 1:length(repos)){
         repo <- repos[i]
         string <- paste0("GET /search/code?q=repo:", repo,"+extension:r")
         res <- try(gh::gh(string, .token=token))
@@ -241,7 +240,7 @@ for(i in 1:length(code)){
 
 ## account for possible incorrect string grabs
 data$raw_named_functions <- I(as.matrix(named_mat))
-data$named_functions     <- I(trimws(gsub("^[[:punct:]]", "", trimws(as.matrix(named_mat))))
+data$named_functions     <- I(trimws(gsub("^[[:punct:]]", "", trimws(as.matrix(named_mat)))))
 data$subset_functions    <- I(trimws(as.matrix(subset_mat)))
 
 

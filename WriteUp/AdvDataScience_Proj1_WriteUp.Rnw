@@ -95,14 +95,14 @@ library(face)
 \centerline{\today}
 
 
-\begin{abstract}
+% \begin{abstract}
+% 
+% Abstract Text
+% 
+% \end{abstract}
+% \textbf{Keywords:} 
 
-Abstract Text
-
-\end{abstract}
-\textbf{Keywords:} 
-
-% \doublespace
+\singlespace
 
 
 
@@ -110,9 +110,32 @@ Abstract Text
 
 \section{Introduction}
 
+In any data analysis, the first step is to first collect the data. 
+Once collected, there is usually a data processing/cleaning procedure 
+that takes the raw data and transforms it into an ``analysis ready" format using some programming language. 
+How individuals navigate this procedure is of scientific interest for several reasons. 
+Among those reasons are: (1) the importance of upstream data processing pipelines to 
+downstream analysis -- i.e. garbage in, garbage out; and (2) how heterogeneity in individuals' coding styles 
+results in readability and understandability among their piers -- i.e. 
+``can this code reasonably be maintained by someone else". 
 
+While a comprehensive answer to the question ``how do people code?" is beyond the scope of this paper, we 
+attempt to identify the key features which can explain the variability in the way people solve a particular coding problem: 
+processing data. 
+Analyzing how people process data has the potential to address both of the aforementioned sceintific questions. 
 
+We use publicly available data from students who enrolled in the Coursera class 
+``Getting and Cleaning Data" ({\color{red}include citation}). The final project for the class has students merge two
+data sets, rename variables, and then summarize the data in a smaller, tidy dataset. To perform this data processing, 
+students used the statistical software {\it R} ({\color{red}include citation}), but were otherwise given complete flexibility on 
+how to complete the assignment. 
+In addition to students' code, we have a search ranking score provided by Github, which we use as a proxy for 
+a ``rating" or ``grade" on students' assignments. We associate with score with 
 
+The rest of this document is organized as follows: In section~\ref{methods} we describe the data retrieval procedure and 
+limitations of this procedurein detail, as well as the statistical methods used in data analysis. 
+In section~\ref{results} we present the results of our statstical analyses. 
+We conclude with a high level discussion of our results and implications for future research in section~\ref{discussion}.
 
 
 
@@ -121,6 +144,7 @@ Abstract Text
 %%%%%%%%%%%%%
 
 \section{Methods}
+\label{methods}
 
 Here we discuss our data collection procedure and the statistical methods used in our data analysis.
 
@@ -129,15 +153,17 @@ Here we discuss our data collection procedure and the statistical methods used i
 \subsection{Getting the Data}
 
 The data was retrieved from Github. 
-The data was retrived over the 72 hour period period 10/02/2017-10/04/2017.
-All data retreival and analyses were performed in {\it R} ({\color{red}add pacakge + R citation}).
+The data was retrieved over the 72 hour period period 10/02/2017-10/04/2017.
+All data retrieval and analyses were performed in {\it R} ({\color{red}add package + R citation}).
 At a high level, the retrieval procedure followed the two steps below 
- 
- - Use the {\it gh} package available ({\color{red}add pacakge citation}) 
+
+\begin{itemize} 
+ \item Use the {\it gh} package available ({\color{red}add package citation}) 
 to find all repos associated with the class which were created on or after 12/01/2007
- - Use the {\it gh} package to search the repos discovered in the previous step for a file called ``run\_analysis.R". Then 
- scrape the data using the url structure implied by the location of the ``run\_analysis.R" file using the 
+ \item Use the {\it gh} package to search the repos discovered in the previous step for a file called ``run\_analysis.R". Then 
+ scrape the data using the URL structure implied by the location of the ``run\_analysis.R" file using the 
  {\it readlines} function
+ \end{itemize}
 
 More detailed information on each of these steps is provided below.
 
@@ -159,8 +185,8 @@ The exact repo search was performed using the query:
 
 We note that one limitation of our procedure is that any repos created prior to 12/01/2007 would not be included in our analysis. 
 However, since this date is prior to the creation of the class, in order for someone to be missed using this procedure, they would've 
-had to rename or repurpose an existing repo. We believe this to be unlikely, but note that it is a possiblity.
-Also, note that our code does not allow for repository names to have hypens in them. These individuals were excluded from our 
+had to rename or re-purpose an existing repo. We believe this to be unlikely, but note that it is a possibility.
+Also, note that our code does not allow for repository names to have hyphens in them. These individuals were excluded from our 
 analysis. These individuals number {\color{red}\textbf{INCLUDE NUMBER}}.
 
 
@@ -175,9 +201,9 @@ This will search the entire repository for any .R files.
 
 We then used regular expressions ({\it gregexpr}) to find whether 
 any of these .R files matched ``run\_analysis.r" by using the {\it to.lower}
-function in R to allow for various capitalizated letters and 
+function in R to allow for various capitalized letters and 
 still match. Finally, we scraped the ``run\_analysis.R" file using the {\it readlines} 
-function on the approraite url based on the file name, repository name 
+function on the appropriate URL based on the file name, repository name 
 and branch name.
 
 We note that our code does impose some limitations. First and foremost, there were some files that we attempted to read, but 
@@ -187,11 +213,13 @@ their final project. So these are users who, sometimes, were able to complete th
 We estimate the number of these individuals to be \textbf{INCLUDE NUMBER}.
 
 
+\subsubsection{Limitations of the Data Retrieval Procedure}
 
+Discuss limitations of both my code for extracting unique functions (i.e. error rate) as well as the limitations of the Github ``score"
 
 \subsection{Analyzing the Data}
 
-
+Discuss PCA and our linear regression of github scores on features/PC scores.
 
 
 
@@ -199,7 +227,11 @@ We estimate the number of these individuals to be \textbf{INCLUDE NUMBER}.
 
 
 \section{Results}
+\label{results}
 
+
+
+\subsection{Principal Components Analysis}
 
 <<echo=FALSE>>=
 load("pca.rdata")
@@ -240,6 +272,19 @@ Cumulative \% variance explained &  \Sexpr{cpct[1]} &  \Sexpr{cpct[2]}  &  \Sexp
 \caption{Biplots for the first 4 principal components}
 \end{figure}
 
+
+
+
+
+
+
+\subsection{Associating Github Score with Code Features}
+
+
+
+
+\section{Discussion}
+\label{discussion}
 
 
 % \bibliographystyle{chicago}
