@@ -259,10 +259,15 @@ Discuss limitations of both my code for extracting unique functions (i.e. error 
 
 \subsection{Analyzing the Data}
 
-Discuss PCA and our linear regression of github scores on features/PC scores.
+Discuss choice and justification for the 10 features explored.
 
+\subsubsection{Principal components analysis}
 
+Discuss PCA.
 
+\subsubsection{Associating Github ``scores" with features of the data}
+
+Discuss linear regression of github scores on features/PC scores.
 
 
 
@@ -296,15 +301,16 @@ Cumulative \% variance explained &  38.3 &  53.5  &  66.2  &  76.7  &  85  &  91
 \caption{First Six Principal Components}
 \end{table}
 
+% 
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=16cm,height=16cm]{biplots}
+% \caption{Biplots for the first 4 principal components}
+% \end{figure}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=16cm,height=16cm]{biplots}
-\caption{Biplots for the first 4 principal components}
-\end{figure}
 
 
-
+\subsection{Regression Analysis}
 
 
 
@@ -316,6 +322,12 @@ Cumulative \% variance explained &  38.3 &  53.5  &  66.2  &  76.7  &  85  &  91
 
 \section{Discussion}
 \label{discussion}
+
+Ultimately, we found that features which closely correspond to our perceptions of what ``efficient" 
+code looks like explain the majority of the variability in how individuals solved this partilcular assignment and 
+are most predictive of the Github search score. 
+
+
 
 
 % \bibliographystyle{chicago}
